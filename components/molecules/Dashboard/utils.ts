@@ -14,30 +14,30 @@ export interface SubMenuItem {
 
 export const menuItems: MenuItem[] = [
   {
+    label: "Ejercicio",
     icon: "Activity",
-    label: "Ejercicios",
     items: [
-      { icon: "History", label: "Historial", href: "/dashboard/exercise/history" },
-      { icon: "Play", label: "Iniciar entrenamiento", href: "/dashboard/exercise/start" },
-      { icon: "Book", label: "Recomendaciones", href: "/dashboard/exercise/recommendations" },
+      { label: "Historial", href: "/dashboard/exercise/history", icon: "History" },
+      { label: "Empezar Entrenamiento", href: "/dashboard/exercise/start", icon: "Play" },
+      { label: "Recomendaciones", href: "/dashboard/exercise/recommendations", icon: "Lightbulb" },
     ],
   },
   {
-    icon: "Utensils",
     label: "Alimentación",
+    icon: "Utensils",
     items: [
-      { icon: "History", label: "Historial", href: "/dashboard/nutrition/history" },
-      { icon: "Book", label: "Recetas", href: "/dashboard/nutrition/recipes" },
-      { icon: "Plus", label: "Agregar comida", href: "/dashboard/nutrition/add" },
-      { icon: "Calculator", label: "Cálculo de calorías diarias", href: "/dashboard/nutrition/calculator" },
+      { label: "Historial", href: "/dashboard/nutrition/history", icon: "History" },
+      { label: "Recetas", href: "/dashboard/nutrition/recipes", icon: "Book" },
+      { label: "Agregar Comida", href: "/dashboard/nutrition/add", icon: "Plus" },
+      { label: "Calculadora de Calorías", href: "/dashboard/nutrition/calculator", icon: "Calculator" },
     ],
   },
   {
-    icon: "Moon",
     label: "Sueño",
+    icon: "Moon",
     items: [
-      { icon: "History", label: "Historial", href: "/dashboard/sleep/history" },
-      { icon: "Plus", label: "Agregar descanso", href: "/dashboard/sleep/add" },
+      { label: "Historial", href: "/dashboard/sleep/history", icon: "History" },
+      { label: "Agregar Descanso", href: "/dashboard/sleep/add", icon: "BedDouble" },
     ],
   },
   {
