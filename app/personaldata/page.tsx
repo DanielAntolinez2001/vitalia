@@ -6,7 +6,7 @@ interface UserProfile {
   name: string;
   email: string;
   phone: string;
-  birthday: string;  
+  birthday: string;
 }
 
 const ProfileSettings: React.FC = () => {
@@ -14,14 +14,16 @@ const ProfileSettings: React.FC = () => {
     name: "",
     email: "",
     phone: "",
-    birthday: "" 
+    birthday: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setProfile({
       ...profile,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -32,13 +34,15 @@ const ProfileSettings: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto p-4 font-sans">
-      <h2 className="text-center text-black text-2xl font-semibold mb-4">Configuración de Perfil</h2>
+      <h2 className="text-center text-black text-2xl font-semibold mb-4">
+        Configuración de Perfil
+      </h2>
 
       <div className="border border-black bg-white shadow-md rounded-lg p-4">
         {/* Sección de foto de perfil */}
         <div className="flex flex-col items-center mb-4">
           <img
-            src="/default-profile.png" 
+            src="/default-profile.png"
             alt="Foto de perfil"
             className="w-24 h-24 rounded-full border border-black object-cover mb-2"
           />
@@ -50,7 +54,9 @@ const ProfileSettings: React.FC = () => {
         {/* Formulario de información del perfil */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-black mb-1">Nombre:</label>
+            <label htmlFor="name" className="block text-black mb-1">
+              Nombre:
+            </label>
             <input
               type="text"
               id="name"
@@ -62,7 +68,9 @@ const ProfileSettings: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="email" className="block text-black mb-1">Correo Electrónico:</label>
+            <label htmlFor="email" className="block text-black mb-1">
+              Correo Electrónico:
+            </label>
             <input
               type="email"
               id="email"
@@ -74,7 +82,9 @@ const ProfileSettings: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="phone" className="block text-black mb-1">Teléfono:</label>
+            <label htmlFor="phone" className="block text-black mb-1">
+              Teléfono:
+            </label>
             <input
               type="tel"
               id="phone"
@@ -86,7 +96,9 @@ const ProfileSettings: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="birthday" className="block text-black mb-1">Fecha de Cumpleaños:</label>
+            <label htmlFor="birthday" className="block text-black mb-1">
+              Fecha de Cumpleaños:
+            </label>
             <input
               type="date" // Tipo de input para un calendario desplegable.
               id="birthday"
