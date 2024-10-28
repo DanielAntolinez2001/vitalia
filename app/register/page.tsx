@@ -2,6 +2,7 @@ import RegisterForm from "@/components/molecules/RegisterForm";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import LoginImage from "@/res/LoginImage.png";
 
 export default function RegisterPage() {
   return (
@@ -32,11 +33,11 @@ export default function RegisterPage() {
       </div>
       <div className="hidden xl:flex w-1/2 bg-muted items-center justify-center p-12">
         <Image
-          src="/logo.svg"
+          src={LoginImage}
           alt="HealthSaaS Logo"
-          width={400}
-          height={400}
-          className="max-w-md"
+          width={900}
+          height={700}
+          className="max-w-screen-2xl rounded-xl"
         />
       </div>
     </div>

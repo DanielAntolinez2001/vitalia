@@ -2,17 +2,18 @@ import LoginForm from "@/components/molecules/LoginForm";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import LoginImage from "@/res/LoginImage.png";
 
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen bg-background">
       <div className="hidden xl:flex w-1/2 bg-muted items-center justify-center p-12">
         <Image
-          src="/logo.svg"
-          alt="HealthSaaS Logo"
-          width={400}
-          height={400}
-          className="max-w-md"
+          src={LoginImage}
+          alt="Vitalia Logo"
+          width={900}
+          height={700}
+          className="max-w-screen-2xl rounded-xl"
         />
       </div>
       <div className="flex flex-col w-full xl:w-1/2 p-8">
