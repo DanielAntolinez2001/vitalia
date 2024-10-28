@@ -10,8 +10,9 @@ export default function RecipesPage() {
         </h2>
       </div>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>Recetas Recomendadas</CardTitle>
+          <Book className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           {/* Implement list or grid of recipes */}

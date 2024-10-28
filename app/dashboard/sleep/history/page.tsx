@@ -10,8 +10,9 @@ export default function SleepHistoryPage() {
         </h2>
       </div>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>Registro de Sueño</CardTitle>
+          <Moon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           {/* Implement table or chart of sleep patterns */}

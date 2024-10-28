@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
+  ChartData,
 } from "chart.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -27,7 +28,7 @@ interface DashboardSectionProps {
   title: string;
   icon: React.ReactNode;
   summary: Array<{ label: string; value: string }>;
-  chartData: any;
+  chartData: ChartData<"line">;
 }
 
 const chartOptions: ChartOptions<"line"> = {

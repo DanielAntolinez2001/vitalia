@@ -11,8 +11,9 @@ export default function AddFoodPage() {
         <h2 className="text-3xl font-bold tracking-tight">Agregar Comida</h2>
       </div>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>Detalles de la Comida</CardTitle>
+          <Plus className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
