@@ -1,34 +1,48 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 interface HeaderProps {
   children?: React.ReactNode;
+  heading?: string;
+  text?: string;
 }
 
-export function Header({ children }: HeaderProps) {
+export function Header({ children, heading, text }: HeaderProps) {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <div className="flex gap-6 md:gap-10">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <div className="flex items-center">
           {children}
-          <h1 className="text-lg font-semibold">Mi Dashboard</h1>
+          <div className="ml-4">
+            <h1 className="text-lg font-semibold">
+              {heading || "Mi Dashboard"}
+            </h1>
+            {text && <p className="text-sm text-muted-foreground">{text}</p>}
+          </div>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {mounted &&
+            (theme === "dark" ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
+            ))}
+        </Button>
       </div>
     </header>
   );

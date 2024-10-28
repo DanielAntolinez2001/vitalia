@@ -1,13 +1,21 @@
 import { DashboardSection } from "./DashboardSection";
-import { Activity, Utensils, Moon } from "lucide-react";
+import {
+  Activity,
+  Utensils,
+  Moon,
+  Footprints,
+  Flame,
+  Heart,
+} from "lucide-react";
 import { generateChartData } from "./utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DashboardContent() {
   return (
-    <main className="flex-1 overflow-y-auto">
-      <div className="container py-6 space-y-8">
+    <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
             Bienvenido a tu dashboard personal
           </h2>
           <p className="text-muted-foreground">
@@ -15,7 +23,31 @@ export function DashboardContent() {
             ejercicios, alimentación y patrones de sueño.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+        <div className="grid gap-4 md:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
+          <MetricCard
+            title="Pasos Diarios"
+            value="8,234"
+            icon={<Footprints className="h-4 w-4" />}
+          />
+          <MetricCard
+            title="Calorías Quemadas"
+            value="487"
+            icon={<Flame className="h-4 w-4" />}
+          />
+          <MetricCard
+            title="Ritmo Cardíaco"
+            value="72 bpm"
+            icon={<Heart className="h-4 w-4" />}
+          />
+          <MetricCard
+            title="Minutos Activos"
+            value="45"
+            icon={<Activity className="h-4 w-4" />}
+          />
+        </div>
+
+        <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           <DashboardSection
             title="Ejercicios"
             icon={<Activity className="h-6 w-6" />}
@@ -52,5 +84,25 @@ export function DashboardContent() {
         </div>
       </div>
     </main>
+  );
+}
+
+interface MetricCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+}
+
+function MetricCard({ title, value, icon }: MetricCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
   );
 }
