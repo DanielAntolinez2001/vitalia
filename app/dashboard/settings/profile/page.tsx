@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState } from "react";
 
 interface UserProfile {
@@ -41,7 +42,7 @@ const ProfileSettings: React.FC = () => {
       <div className="border border-black bg-white shadow-md rounded-lg p-4">
         {/* Sección de foto de perfil */}
         <div className="flex flex-col items-center mb-4">
-          <img
+          <Image
             src="/default-profile.png"
             alt="Foto de perfil"
             className="w-24 h-24 rounded-full border border-black object-cover mb-2"
