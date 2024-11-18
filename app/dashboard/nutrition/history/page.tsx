@@ -42,6 +42,52 @@ const mockWeeklyData = [
   { day: 'Domingo', calories: 2000 },
 ]
 
+const mockMeals = [
+  { name: 'Desayuno', proteins: 20, carbs: 30, fats: 10 },
+  { name: 'Almuerzo', proteins: 30, carbs: 40, fats: 15 },
+  { name: 'Cena', proteins: 25, carbs: 35, fats: 12 },
+  { name: 'Merienda', proteins: 10, carbs: 20, fats: 5 },
+]
+
+interface Meal {
+  name: string;
+  proteins: number;
+  carbs: number;
+  fats: number;
+}
+
+const MacronutrientBreakdown = ({ meals }: { meals: Meal[] }) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Desglose de Macronutrientes</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Comida</TableHead>
+              <TableHead>Proteínas (g)</TableHead>
+              <TableHead>Carbohidratos (g)</TableHead>
+              <TableHead>Grasas (g)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {meals.map((meal, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{meal.name}</TableCell>
+                <TableCell>{meal.proteins}</TableCell>
+                <TableCell>{meal.carbs}</TableCell>
+                <TableCell>{meal.fats}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function NutritionHistoryPage() {
   const [currentWeek, setCurrentWeek] = useState(0)
 
@@ -79,6 +125,9 @@ export default function NutritionHistoryPage() {
           Historial de Alimentación
         </h2>
       </div>
+      
+      <MacronutrientBreakdown meals={mockMeals} />
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>Resumen Semanal de Calorías</CardTitle>
