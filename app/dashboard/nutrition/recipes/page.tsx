@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Book, ChevronDown } from "lucide-react"
+import { Book, ChevronDown, Plus } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -16,8 +18,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { useToast } from "@/components/ui/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
-// Mock data for recipes
 const recipes = [
   {
     id: 1,
@@ -57,10 +60,25 @@ const recipes = [
 export default function RecipesPage() {
   const [selectedGoal, setSelectedGoal] = useState("todos")
   const [expandedRecipe, setExpandedRecipe] = useState<number | null>(null)
+  const [dietaryPreferences, setDietaryPreferences] = useState("")
+  const [allergies, setAllergies] = useState("")
+  const { toast } = useToast()
 
   const filteredRecipes = selectedGoal === "todos" 
     ? recipes 
     : recipes.filter(recipe => recipe.goal === selectedGoal)
+
+  const handlePreferencesSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("Dietary Preferences:", dietaryPreferences)
+    console.log("Allergies:", allergies)
+    toast({
+      title: "Preferencias guardadas",
+      description: "Tus preferencias alimenticias y alergias han sido registradas.",
+    })
+    setDietaryPreferences("")
+    setAllergies("")
+  }
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -69,6 +87,37 @@ export default function RecipesPage() {
           Recetas Saludables
         </h2>
       </div>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle>Preferencias Alimenticias y Alergias</CardTitle>
+          <Plus className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePreferencesSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="dietary-preferences">Preferencias Alimenticias</Label>
+              <Input
+                id="dietary-preferences"
+                placeholder="Ej: Vegetariano, Bajo en carbohidratos"
+                value={dietaryPreferences}
+                onChange={(e) => setDietaryPreferences(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="allergies">Alergias</Label>
+              <Input
+                id="allergies"
+                placeholder="Ej: Nueces, Lácteos"
+                value={allergies}
+                onChange={(e) => setAllergies(e.target.value)}
+              />
+            </div>
+            <Button type="submit">Guardar Preferencias</Button>
+          </form>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>Recetas Recomendadas</CardTitle>
@@ -128,6 +177,7 @@ export default function RecipesPage() {
           </div>
         </CardContent>
       </Card>
+      <Toaster />
     </div>
   )
 }

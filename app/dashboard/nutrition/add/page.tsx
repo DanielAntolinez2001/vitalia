@@ -1,12 +1,15 @@
 'use client'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function AddFoodPage() {
   const [foodName, setFoodName] = useState("");
@@ -14,7 +17,14 @@ export default function AddFoodPage() {
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
+  const [dailyCalorieLimit, setDailyCalorieLimit] = useState(2000); 
+  const [totalCaloriesConsumed, setTotalCaloriesConsumed] = useState(0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    setDailyCalorieLimit(2000);
+    setTotalCaloriesConsumed(1500);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,12 +32,25 @@ export default function AddFoodPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log("Alimento agregado:", { foodName, calories, protein, carbs, fat });
+      const newCalories = parseInt(calories);
+      const newTotalCalories = totalCaloriesConsumed + newCalories;
       
+      console.log("Alimento agregado:", { foodName, calories: newCalories, protein, carbs, fat });
+      
+      setTotalCaloriesConsumed(newTotalCalories);
+
       toast({
         title: "Alimento agregado",
         description: `${foodName} ha sido agregado a tu base de datos personal.`,
       });
+
+      if (newTotalCalories > dailyCalorieLimit) {
+        toast({
+          title: "¡Alerta de calorías!",
+          description: `Has superado tu límite diario de calorías (${dailyCalorieLimit} kcal). Consumo actual: ${newTotalCalories} kcal.`,
+          variant: "destructive",
+        });
+      }
 
       setFoodName("");
       setCalories("");
@@ -113,6 +136,7 @@ export default function AddFoodPage() {
           </form>
         </CardContent>
       </Card>
+      <Toaster />
     </div>
   );
 }
