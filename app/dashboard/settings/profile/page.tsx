@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-// Definición de la interfaz para los datos del perfil del usuario.
+// Definición de la interfaz para los datos del perfil del administrador y los usuarios.
 interface UserProfile {
   name: string;
   email: string;
@@ -10,189 +10,149 @@ interface UserProfile {
   birthday: string;
   isActive: boolean;
   role: string;
+  activities: string[];
 }
 
-const ProfileSettings: React.FC = () => {
-  // Estado que guarda los datos del perfil y su función de actualización.
-  const [profile, setProfile] = useState<UserProfile>({
-    name: "",
-    email: "",
-    phone: "",
-    birthday: "",
-    isActive: true, // Estado por defecto: cuenta activa
-    role: "Usuario",
+interface AdminProfile {
+  name: string;
+  email: string;
+  role: string;
+}
+
+const AdminProfileSettings: React.FC = () => {
+  // Estado para el perfil del administrador
+  const [adminProfile, setAdminProfile] = useState<AdminProfile>({
+    name: "Administrador",
+    email: "admin@example.com",
+    role: "Administrador",
   });
 
-  const [alert, setAlert] = useState<string | null>(null); // Estado para las alertas
-  const [activities] = useState([
-    "Inicio de sesión el 15/11/2024",
-    "Cambio de correo electrónico el 14/11/2024",
-    "Actualización de perfil el 13/11/2024",
-  ]); // Actividades de usuario (estático para demo)
+  // Estado para gestionar los usuarios
+  const [users, setUsers] = useState<UserProfile[]>([
+    {
+      name: "Usuario 1",
+      email: "usuario1@example.com",
+      phone: "123-456-789",
+      birthday: "1990-01-01",
+      isActive: true,
+      role: "Usuario",
+      activities: ["Inicio de sesión", "Actualización de perfil"],
+    },
+    {
+      name: "Usuario 2",
+      email: "usuario2@example.com",
+      phone: "987-654-321",
+      birthday: "1995-05-05",
+      isActive: false,
+      role: "Moderador",
+      activities: ["Cambio de correo electrónico"],
+    },
+  ]);
 
-  // Función que maneja los cambios en los campos del formulario.
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProfile({
-      ...profile,
-      [name]: value,
-    });
+  // Función para activar/desactivar cuentas de usuario
+  const handleToggleUserStatus = (email: string) => {
+    setUsers(users.map(user => 
+      user.email === email ? { ...user, isActive: !user.isActive } : user
+    ));
   };
 
-  // Función que maneja el envío del formulario.
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Cambios guardados");
+  // Función para cambiar el rol de un usuario
+  const handleRoleChange = (email: string, role: string) => {
+    setUsers(users.map(user => 
+      user.email === email ? { ...user, role } : user
+    ));
   };
 
-  // Función para activar/desactivar la cuenta
-  const handleToggleStatus = () => {
-    setProfile({
-      ...profile,
-      isActive: !profile.isActive,
-    });
-  };
-
-  // Función para eliminar la cuenta (solo visual)
-  const handleDeleteAccount = () => {
-    alert("Cuenta eliminada");
-    // Aquí normalmente enviarías una solicitud para eliminar la cuenta
-  };
-
-  // Función para cambiar el rol del usuario
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setProfile({
-      ...profile,
-      role: e.target.value,
-    });
-  };
-
-  // Función para activar una alerta
-  const triggerAlert = () => {
-    setAlert("¡Alerta! Cuenta sospechosa detectada.");
-  };
-
-  // Función para restablecer la contraseña
-  const handleResetPassword = () => {
-    alert("Contraseña restablecida. Se ha enviado un enlace de restablecimiento al correo.");
+  // Función para mostrar o ocultar el historial de actividad de un usuario
+  const handleShowActivity = (email: string) => {
+    const user = users.find(user => user.email === email);
+    if (user) {
+      alert(`Historial de actividad para ${user.name}: ${user.activities.join(", ")}`);
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 font-sans">
-      <h2 className="text-center text-black text-2xl font-semibold mb-4">Configuración de Perfil</h2>
+    <div className="max-w-4xl mx-auto p-4 font-sans">
+      <h2 className="text-center text-black text-2xl font-semibold mb-4">Perfil de Administrador</h2>
 
-      {/* Sección de Foto de perfil y botón para cambiar */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4">
-        <div className="flex flex-col items-center mb-4">
-          <img
-            src="/default-profile.png"
-            alt="Foto de perfil"
-            className="w-24 h-24 rounded-full border border-black object-cover mb-2"
-          />
-          <button className="px-4 py-2 border border-black bg-transparent text-black hover:bg-gray-200 rounded">
-            Cambiar foto
-          </button>
-        </div>
-
-        {/* Formulario para editar perfil */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-1">Nombre:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={profile.name}
-              onChange={handleChange}
-              className="mt-1 border border-black rounded w-full p-2"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="email" className="block mb-1">Correo Electrónico:</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={profile.email}
-              onChange={handleChange}
-              className="mt-1 border border-black rounded w-full p-2"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="phone" className="block mb-1">Teléfono:</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={profile.phone}
-              onChange={handleChange}
-              className="mt-1 border border-black rounded w-full p-2"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="birthday" className="block mb-1">Fecha de Cumpleaños:</label>
-            <input
-              type="date"
-              id="birthday"
-              name="birthday"
-              value={profile.birthday}
-              onChange={handleChange}
-              className="mt-1 border border-black rounded w-full p-2"
-            />
-          </div>
-
-          <button type="submit" className="w-full bg-black text-white hover:bg-gray-800 py-2 rounded">Guardar Cambios</button>
-        </form>
-
-        {/* Botones de administración */}
-        <div className="mt-4 flex justify-between">
-          <button onClick={handleToggleStatus} className="px-4 py-2 border border-black bg-transparent text-black hover:bg-gray-200 rounded">
-            {profile.isActive ? "Desactivar Cuenta" : "Activar Cuenta"}
-          </button>
-          <button onClick={handleDeleteAccount} className="px-4 py-2 border border-red-600 bg-red-100 text-red-600 hover:bg-red-200 rounded">
-            Eliminar Cuenta
-          </button>
-        </div>
-
-        {/* Sección para cambiar rol */}
-        <div className="mb-4 mt-4">
-          <label htmlFor="role" className="block mb-1">Rol:</label>
-          <select
-            id="role"
-            name="role"
-            value={profile.role}
-            onChange={handleRoleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-          >
-            <option value="Usuario">Usuario</option>
-            <option value="Moderador">Moderador</option>
-            <option value="Administrador">Administrador</option>
-          </select>
-        </div>
-
-        {/* Historial de actividad */}
+      {/* Información del perfil del administrador */}
+      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-semibold">Detalles del Administrador</h3>
         <div className="mt-4">
-          <h3 className="text-lg font-semibold">Historial de Actividad:</h3>
-          <ul className="list-disc pl-5">
-            {activities.map((activity, index) => (
-              <li key={index}>{activity}</li>
+          <p><strong>Nombre:</strong> {adminProfile.name}</p>
+          <p><strong>Correo Electrónico:</strong> {adminProfile.email}</p>
+          <p><strong>Rol:</strong> {adminProfile.role}</p>
+        </div>
+      </div>
+
+      {/* Gestión de usuarios */}
+      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-semibold">Gestión de Usuarios</h3>
+        <table className="min-w-full mt-4">
+          <thead>
+            <tr>
+              <th className="border p-2">Nombre</th>
+              <th className="border p-2">Correo Electrónico</th>
+              <th className="border p-2">Estado</th>
+              <th className="border p-2">Rol</th>
+              <th className="border p-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user.email}>
+                <td className="border p-2">{user.name}</td>
+                <td className="border p-2">{user.email}</td>
+                <td className="border p-2">
+                  <button 
+                    onClick={() => handleToggleUserStatus(user.email)}
+                    className={`px-4 py-1 rounded ${user.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                  >
+                    {user.isActive ? "Activado" : "Desactivado"}
+                  </button>
+                </td>
+                <td className="border p-2">{user.role}</td>
+                <td className="border p-2 flex justify-around">
+                  <button
+                    onClick={() => handleShowActivity(user.email)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded"
+                  >
+                    Ver Actividad
+                  </button>
+                  <select
+                    value={user.role}
+                    onChange={(e) => handleRoleChange(user.email, e.target.value)}
+                    className="bg-gray-100 p-1 rounded"
+                  >
+                    <option value="Usuario">Usuario</option>
+                    <option value="Moderador">Moderador</option>
+                    <option value="Administrador">Administrador</option>
+                  </select>
+                </td>
+              </tr>
             ))}
-          </ul>
-        </div>
+          </tbody>
+        </table>
+      </div>
 
-        {/* Alertas */}
-        {alert && <div className="bg-red-100 text-red-600 p-2 rounded mt-4">{alert}</div>}
-        <button onClick={triggerAlert} className="mt-2 px-4 py-2 border border-red-600 bg-red-100 text-red-600 hover:bg-red-200 rounded">
-          Activar Alerta de Cuenta Sospechosa
-        </button>
-
-        {/* Restablecer Contraseña */}
+      {/* Sección de asignación de roles */}
+      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-semibold">Asignación de Roles y Permisos</h3>
         <div className="mt-4">
-          <button onClick={handleResetPassword} className="px-4 py-2 border border-yellow-600 bg-yellow-100 text-yellow-600 hover:bg-yellow-200 rounded">
-            Restablecer Contraseña
+          <p>Como administrador, puedes asignar roles y permisos a otros usuarios. Actualmente, solo puedes asignar roles de "Moderador" o "Administrador".</p>
+        </div>
+      </div>
+
+      {/* Historial de actividades de los usuarios */}
+      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-semibold">Historial de Actividad</h3>
+        <p>Revisa las actividades pasadas de los usuarios para identificar comportamientos inusuales o problemáticos.</p>
+        <div className="mt-4">
+          <button
+            onClick={() => handleShowActivity("usuario1@example.com")}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Ver Actividad de Usuario 1
           </button>
         </div>
       </div>
@@ -200,4 +160,4 @@ const ProfileSettings: React.FC = () => {
   );
 };
 
-export default ProfileSettings;
+export default AdminProfileSettings;
