@@ -1,8 +1,15 @@
-"use client"; // Indica que este componente es un cliente de React (Next.js 13).
+"use client";
 
 import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
-// Definición de la interfaz para los datos del perfil del administrador y los usuarios.
 interface UserProfile {
   name: string;
   email: string;
@@ -10,154 +17,189 @@ interface UserProfile {
   birthday: string;
   isActive: boolean;
   role: string;
-  activities: string[];
 }
 
-interface AdminProfile {
-  name: string;
-  email: string;
-  role: string;
-}
-
-const AdminProfileSettings: React.FC = () => {
-  // Estado para el perfil del administrador
-  const [adminProfile, setAdminProfile] = useState<AdminProfile>({
-    name: "Administrador",
-    email: "admin@example.com",
-    role: "Administrador",
+const ProfileSettings: React.FC = () => {
+  const [profile, setProfile] = useState<UserProfile>({
+    name: "",
+    email: "",
+    phone: "",
+    birthday: "",
+    isActive: true,
+    role: "Usuario",
   });
 
-  // Estado para gestionar los usuarios
-  const [users, setUsers] = useState<UserProfile[]>([
-    {
-      name: "Usuario 1",
-      email: "usuario1@example.com",
-      phone: "123-456-789",
-      birthday: "1990-01-01",
-      isActive: true,
-      role: "Usuario",
-      activities: ["Inicio de sesión", "Actualización de perfil"],
-    },
-    {
-      name: "Usuario 2",
-      email: "usuario2@example.com",
-      phone: "987-654-321",
-      birthday: "1995-05-05",
-      isActive: false,
-      role: "Moderador",
-      activities: ["Cambio de correo electrónico"],
-    },
+  const [activities] = useState([
+    "Inicio de sesión el 15/11/2024",
+    "Cambio de correo electrónico el 14/11/2024",
+    "Actualización de perfil el 13/11/2024",
   ]);
 
-  // Función para activar/desactivar cuentas de usuario
-  const handleToggleUserStatus = (email: string) => {
-    setUsers(users.map(user => 
-      user.email === email ? { ...user, isActive: !user.isActive } : user
-    ));
+  const [isResettingPassword, setIsResettingPassword] = useState<boolean>(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const { toast } = useToast();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfile({
+      ...profile,
+      [name]: value,
+    });
   };
 
-  // Función para cambiar el rol de un usuario
-  const handleRoleChange = (email: string, role: string) => {
-    setUsers(users.map(user => 
-      user.email === email ? { ...user, role } : user
-    ));
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Cambios guardados",
+      description: "Los cambios en tu perfil han sido guardados exitosamente.",
+    });
   };
 
-  // Función para mostrar o ocultar el historial de actividad de un usuario
-  const handleShowActivity = (email: string) => {
-    const user = users.find(user => user.email === email);
-    if (user) {
-      alert(`Historial de actividad para ${user.name}: ${user.activities.join(", ")}`);
+  const handleDeleteAccount = () => {
+    toast({
+      title: "Cuenta eliminada",
+      description: "Tu cuenta ha sido eliminada permanentemente.",
+      variant: "destructive",
+    });
+  };
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword) {
+      toast({
+        title: "Contraseña restablecida",
+        description: "Tu contraseña ha sido restablecida exitosamente.",
+      });
+      setIsResettingPassword(false);
+    } else {
+      toast({
+        title: "Error",
+        description: "Por favor ingrese una nueva contraseña.",
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 font-sans">
-      <h2 className="text-center text-black text-2xl font-semibold mb-4">Perfil de Administrador</h2>
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Configuración de Perfil</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center mb-6">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src="/default-profile.png" alt="Foto de perfil" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <Button variant="outline" className="mt-2">Cambiar foto</Button>
+          </div>
 
-      {/* Información del perfil del administrador */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Detalles del Administrador</h3>
-        <div className="mt-4">
-          <p><strong>Nombre:</strong> {adminProfile.name}</p>
-          <p><strong>Correo Electrónico:</strong> {adminProfile.email}</p>
-          <p><strong>Rol:</strong> {adminProfile.role}</p>
-        </div>
-      </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre:</Label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={profile.name}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* Gestión de usuarios */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Gestión de Usuarios</h3>
-        <table className="min-w-full mt-4">
-          <thead>
-            <tr>
-              <th className="border p-2">Nombre</th>
-              <th className="border p-2">Correo Electrónico</th>
-              <th className="border p-2">Estado</th>
-              <th className="border p-2">Rol</th>
-              <th className="border p-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.email}>
-                <td className="border p-2">{user.name}</td>
-                <td className="border p-2">{user.email}</td>
-                <td className="border p-2">
-                  <button 
-                    onClick={() => handleToggleUserStatus(user.email)}
-                    className={`px-4 py-1 rounded ${user.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-                  >
-                    {user.isActive ? "Activado" : "Desactivado"}
-                  </button>
-                </td>
-                <td className="border p-2">{user.role}</td>
-                <td className="border p-2 flex justify-around">
-                  <button
-                    onClick={() => handleShowActivity(user.email)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
-                  >
-                    Ver Actividad
-                  </button>
-                  <select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user.email, e.target.value)}
-                    className="bg-gray-100 p-1 rounded"
-                  >
-                    <option value="Usuario">Usuario</option>
-                    <option value="Moderador">Moderador</option>
-                    <option value="Administrador">Administrador</option>
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo Electrónico:</Label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                value={profile.email}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* Sección de asignación de roles */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Asignación de Roles y Permisos</h3>
-        <div className="mt-4">
-          <p>Como administrador, puedes asignar roles y permisos a otros usuarios. Actualmente, solo puedes asignar roles de "Moderador" o "Administrador".</p>
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Teléfono:</Label>
+              <Input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={profile.phone}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* Historial de actividades de los usuarios */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Historial de Actividad</h3>
-        <p>Revisa las actividades pasadas de los usuarios para identificar comportamientos inusuales o problemáticos.</p>
-        <div className="mt-4">
-          <button
-            onClick={() => handleShowActivity("usuario1@example.com")}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Ver Actividad de Usuario 1
-          </button>
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="birthday">Fecha de Cumpleaños:</Label>
+              <Input
+                type="date"
+                id="birthday"
+                name="birthday"
+                value={profile.birthday}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isActive"
+                checked={profile.isActive}
+                onCheckedChange={(checked) => setProfile({ ...profile, isActive: checked })}
+              />
+              <Label htmlFor="isActive">Cuenta Activa</Label>
+            </div>
+
+            <Button type="submit">Guardar Cambios</Button>
+          </form>
+
+          <div className="mt-6">
+            <Button variant="destructive" onClick={handleDeleteAccount}>Eliminar Cuenta</Button>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2">Historial de Actividad:</h3>
+            <ul className="list-disc pl-5 space-y-1">
+              {activities.map((activity, index) => (
+                <li key={index}>{activity}</li>
+              ))}
+            </ul>
+          </div>
+
+          {isResettingPassword ? (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Restablecer Contraseña</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">Nueva Contraseña:</Label>
+                    <Input
+                      type="password"
+                      id="newPassword"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit">Restablecer Contraseña</Button>
+                </form>
+              </CardContent>
+            </Card>
+          ) : (
+            <Button
+              onClick={() => setIsResettingPassword(true)}
+              className="mt-4"
+              variant="secondary"
+            >
+              Restablecer Contraseña
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+      <Toaster />
     </div>
   );
 };
 
-export default AdminProfileSettings;
+export default ProfileSettings;

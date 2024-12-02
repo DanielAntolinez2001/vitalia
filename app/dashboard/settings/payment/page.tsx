@@ -1,8 +1,14 @@
-"use client"; // Indica que este componente es un cliente de React (Next.js 13).
+"use client";
 
 import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
-// Definimos una interfaz para la configuración de pago.
 interface PaymentInfo {
   bankName: string;
   accountHolder: string;
@@ -13,152 +19,126 @@ interface PaymentInfo {
 }
 
 const PaymentSettings: React.FC = () => {
-  // Estado para guardar la información de pago
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({
     bankName: "",
     accountHolder: "",
     expirationDate: "",
     cardNumber: "",
-    cardType: "Visa", // Tipo de tarjeta por defecto
+    cardType: "Visa",
     billingAddress: "",
   });
 
-  // Función para manejar los cambios en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const { toast } = useToast();
+
+  const handleChange = (name: string, value: string) => {
     setPaymentInfo({
       ...paymentInfo,
       [name]: value,
     });
   };
 
-  // Función para manejar el envío del formulario
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Configuración de pago guardada correctamente.");
-    // Aquí puedes agregar la lógica para guardar los datos o enviarlos a tu servidor
+    toast({
+      title: "Configuración de pago guardada",
+      description: "Tu información de pago ha sido actualizada correctamente.",
+    });
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 font-sans">
-      <h2 className="text-center text-2xl font-semibold mb-6">Configuración de Pago</h2>
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Configuración de Pago</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="bankName">Nombre del Banco</Label>
+              <Input
+                id="bankName"
+                name="bankName"
+                value={paymentInfo.bankName}
+                onChange={(e) => handleChange("bankName", e.target.value)}
+                placeholder="Nombre del banco"
+                required
+              />
+            </div>
 
-      {/* Formulario para la configuración de pagos */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Campo para el nombre del banco */}
-        <div className="mb-4">
-          <label htmlFor="bankName" className="block text-black mb-1">
-            Nombre del Banco:
-          </label>
-          <input
-            type="text"
-            id="bankName"
-            name="bankName"
-            value={paymentInfo.bankName}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-            placeholder="Nombre del banco"
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="accountHolder">Nombre del Titular de la Cuenta</Label>
+              <Input
+                id="accountHolder"
+                name="accountHolder"
+                value={paymentInfo.accountHolder}
+                onChange={(e) => handleChange("accountHolder", e.target.value)}
+                placeholder="Nombre completo del titular"
+                required
+              />
+            </div>
 
-        {/* Campo para el nombre del titular de la cuenta */}
-        <div className="mb-4">
-          <label htmlFor="accountHolder" className="block text-black mb-1">
-            Nombre del Titular de la Cuenta:
-          </label>
-          <input
-            type="text"
-            id="accountHolder"
-            name="accountHolder"
-            value={paymentInfo.accountHolder}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-            placeholder="Nombre completo del titular"
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="cardType">Tipo de Tarjeta</Label>
+              <Select
+                value={paymentInfo.cardType}
+                onValueChange={(value: string) => handleChange("cardType", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el tipo de tarjeta" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Visa">Visa</SelectItem>
+                  <SelectItem value="MasterCard">MasterCard</SelectItem>
+                  <SelectItem value="American Express">American Express</SelectItem>
+                  <SelectItem value="Discover">Discover</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-        {/* Campo para el tipo de tarjeta */}
-        <div className="mb-4">
-          <label htmlFor="cardType" className="block text-black mb-1">
-            Tipo de Tarjeta:
-          </label>
-          <select
-            id="cardType"
-            name="cardType"
-            value={paymentInfo.cardType}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-          >
-            <option value="Visa">Visa</option>
-            <option value="MasterCard">MasterCard</option>
-            <option value="American Express">American Express</option>
-            <option value="Discover">Discover</option>
-          </select>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="cardNumber">Número de Tarjeta</Label>
+              <Input
+                id="cardNumber"
+                name="cardNumber"
+                value={paymentInfo.cardNumber}
+                onChange={(e) => handleChange("cardNumber", e.target.value)}
+                placeholder="XXXX XXXX XXXX XXXX"
+                maxLength={16}
+                required
+              />
+            </div>
 
-        {/* Campo para el número de tarjeta */}
-        <div className="mb-4">
-          <label htmlFor="cardNumber" className="block text-black mb-1">
-            Número de Tarjeta:
-          </label>
-          <input
-            type="text"
-            id="cardNumber"
-            name="cardNumber"
-            value={paymentInfo.cardNumber}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-            placeholder="XXXX XXXX XXXX XXXX"
-            maxLength={16}
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="expirationDate">Fecha de Vencimiento</Label>
+              <Input
+                type="month"
+                id="expirationDate"
+                name="expirationDate"
+                value={paymentInfo.expirationDate}
+                onChange={(e) => handleChange("expirationDate", e.target.value)}
+                required
+              />
+            </div>
 
-        {/* Campo para la fecha de vencimiento */}
-        <div className="mb-4">
-          <label htmlFor="expirationDate" className="block text-black mb-1">
-            Fecha de Vencimiento:
-          </label>
-          <input
-            type="month"
-            id="expirationDate"
-            name="expirationDate"
-            value={paymentInfo.expirationDate}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="billingAddress">Dirección de Facturación</Label>
+              <Input
+                id="billingAddress"
+                name="billingAddress"
+                value={paymentInfo.billingAddress}
+                onChange={(e) => handleChange("billingAddress", e.target.value)}
+                placeholder="Dirección completa de facturación"
+                required
+              />
+            </div>
 
-        {/* Campo para la dirección de facturación */}
-        <div className="mb-4">
-          <label htmlFor="billingAddress" className="block text-black mb-1">
-            Dirección de Facturación:
-          </label>
-          <input
-            type="text"
-            id="billingAddress"
-            name="billingAddress"
-            value={paymentInfo.billingAddress}
-            onChange={handleChange}
-            className="mt-1 border border-black rounded w-full p-2"
-            placeholder="Dirección completa de facturación"
-            required
-          />
-        </div>
-
-        {/* Botón para enviar el formulario */}
-        <div className="mb-4">
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white hover:bg-blue-700 py-2 rounded"
-          >
-            Guardar Información de Pago
-          </button>
-        </div>
-      </form>
+            <Button type="submit" className="w-full">
+              Guardar Información de Pago
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <Toaster />
     </div>
   );
 };
