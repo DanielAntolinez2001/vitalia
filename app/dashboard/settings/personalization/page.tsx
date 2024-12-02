@@ -1,163 +1,202 @@
-"use client"; // Indica que este componente es un cliente de React (Next.js 13).
+'use client';
 
-import React, { useState } from "react";
+import { useState, useEffect } from 'react';
 
-// Definición de la interfaz para los datos del perfil del administrador y los usuarios.
-interface UserProfile {
-  name: string;
-  email: string;
-  phone: string;
-  birthday: string;
-  isActive: boolean;
-  role: string;
-  activities: string[];
-}
+const PersonalizationPage = () => {
+  const [theme, setTheme] = useState('light');
+  const [showWorkout, setShowWorkout] = useState(true);
+  const [showNutrition, setShowNutrition] = useState(true);
+  const [reminder, setReminder] = useState('');
+  const [motivation, setMotivation] = useState('¡Sigue adelante!');
+  const [userProgress, setUserProgress] = useState({ weight: 70, goal: 'Bajar de peso' });
 
-interface AdminProfile {
-  name: string;
-  email: string;
-  role: string;
-}
+  // Cargar preferencias del almacenamiento local cuando se monta el componente
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const savedShowWorkout = localStorage.getItem('showWorkout');
+    const savedShowNutrition = localStorage.getItem('showNutrition');
+    const savedReminder = localStorage.getItem('reminder');
+    const savedMotivation = localStorage.getItem('motivation');
+    const savedProgress = localStorage.getItem('userProgress');
 
-const AdminProfileSettings: React.FC = () => {
-  // Estado para el perfil del administrador
-  const [adminProfile, setAdminProfile] = useState<AdminProfile>({
-    name: "Administrador",
-    email: "admin@example.com",
-    role: "Administrador",
-  });
+    if (savedTheme) setTheme(savedTheme);
+    if (savedShowWorkout !== null) setShowWorkout(JSON.parse(savedShowWorkout));
+    if (savedShowNutrition !== null) setShowNutrition(JSON.parse(savedShowNutrition));
+    if (savedReminder) setReminder(savedReminder);
+    if (savedMotivation) setMotivation(savedMotivation);
+    if (savedProgress) setUserProgress(JSON.parse(savedProgress));
+  }, []);
 
-  // Estado para gestionar los usuarios
-  const [users, setUsers] = useState<UserProfile[]>([
-    {
-      name: "Usuario 1",
-      email: "usuario1@example.com",
-      phone: "123-456-789",
-      birthday: "1990-01-01",
-      isActive: true,
-      role: "Usuario",
-      activities: ["Inicio de sesión", "Actualización de perfil"],
-    },
-    {
-      name: "Usuario 2",
-      email: "usuario2@example.com",
-      phone: "987-654-321",
-      birthday: "1995-05-05",
-      isActive: false,
-      role: "Moderador",
-      activities: ["Cambio de correo electrónico"],
-    },
-  ]);
-
-  // Función para activar/desactivar cuentas de usuario
-  const handleToggleUserStatus = (email: string) => {
-    setUsers(users.map(user => 
-      user.email === email ? { ...user, isActive: !user.isActive } : user
-    ));
-  };
-
-  // Función para cambiar el rol de un usuario
-  const handleRoleChange = (email: string, role: string) => {
-    setUsers(users.map(user => 
-      user.email === email ? { ...user, role } : user
-    ));
-  };
-
-  // Función para mostrar o ocultar el historial de actividad de un usuario
-  const handleShowActivity = (email: string) => {
-    const user = users.find(user => user.email === email);
-    if (user) {
-      alert(`Historial de actividad para ${user.name}: ${user.activities.join(", ")}`);
-    }
+  // Guardar las preferencias en el almacenamiento local
+  const savePreferences = () => {
+    localStorage.setItem('theme', theme);
+    localStorage.setItem('showWorkout', JSON.stringify(showWorkout));
+    localStorage.setItem('showNutrition', JSON.stringify(showNutrition));
+    localStorage.setItem('reminder', reminder);
+    localStorage.setItem('motivation', motivation);
+    localStorage.setItem('userProgress', JSON.stringify(userProgress));
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 font-sans">
-      <h2 className="text-center text-black text-2xl font-semibold mb-4">Perfil de Administrador</h2>
+    <div className={`container ${theme}`}>
+      <h1 className="text-center">Personaliza tu Página de Inicio</h1>
 
-      {/* Información del perfil del administrador */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Detalles del Administrador</h3>
-        <div className="mt-4">
-          <p><strong>Nombre:</strong> {adminProfile.name}</p>
-          <p><strong>Correo Electrónico:</strong> {adminProfile.email}</p>
-          <p><strong>Rol:</strong> {adminProfile.role}</p>
-        </div>
+      {/* Sección para elegir el tema */}
+      <div className="theme-settings">
+        <h3>Selecciona el Tema</h3>
+        <button onClick={() => setTheme('light')} className="theme-button">
+          Claro
+        </button>
+        <button onClick={() => setTheme('dark')} className="theme-button">
+          Oscuro
+        </button>
       </div>
 
-      {/* Gestión de usuarios */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Gestión de Usuarios</h3>
-        <table className="min-w-full mt-4">
-          <thead>
-            <tr>
-              <th className="border p-2">Nombre</th>
-              <th className="border p-2">Correo Electrónico</th>
-              <th className="border p-2">Estado</th>
-              <th className="border p-2">Rol</th>
-              <th className="border p-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.email}>
-                <td className="border p-2">{user.name}</td>
-                <td className="border p-2">{user.email}</td>
-                <td className="border p-2">
-                  <button 
-                    onClick={() => handleToggleUserStatus(user.email)}
-                    className={`px-4 py-1 rounded ${user.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-                  >
-                    {user.isActive ? "Activado" : "Desactivado"}
-                  </button>
-                </td>
-                <td className="border p-2">{user.role}</td>
-                <td className="border p-2 flex justify-around">
-                  <button
-                    onClick={() => handleShowActivity(user.email)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
-                  >
-                    Ver Actividad
-                  </button>
-                  <select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user.email, e.target.value)}
-                    className="bg-gray-100 p-1 rounded"
-                  >
-                    <option value="Usuario">Usuario</option>
-                    <option value="Moderador">Moderador</option>
-                    <option value="Administrador">Administrador</option>
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Sección para mostrar/ocultar secciones */}
+      <div className="section-settings">
+        <h3>Secciones a Mostrar</h3>
+        <label>
+          <input
+            type="checkbox"
+            checked={showWorkout}
+            onChange={() => setShowWorkout(!showWorkout)}
+          />
+          Mostrar Sección de Ejercicios
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showNutrition}
+            onChange={() => setShowNutrition(!showNutrition)}
+          />
+          Mostrar Sección de Nutrición
+        </label>
       </div>
 
-      {/* Sección de asignación de roles */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Asignación de Roles y Permisos</h3>
-        <div className="mt-4">
-          <p>Como administrador, puedes asignar roles y permisos a otros usuarios. Actualmente, solo puedes asignar roles de "Moderador" o "Administrador".</p>
-        </div>
+      {/* Sección para recordatorios */}
+      <div className="reminder-settings">
+        <h3>Recordatorio Personalizado</h3>
+        <textarea
+          value={reminder}
+          onChange={(e) => setReminder(e.target.value)}
+          placeholder="Escribe tu recordatorio (Ej. ¡No olvides hacer ejercicio hoy!)"
+        />
       </div>
 
-      {/* Historial de actividades de los usuarios */}
-      <div className="border border-black bg-white shadow-md rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-semibold">Historial de Actividad</h3>
-        <p>Revisa las actividades pasadas de los usuarios para identificar comportamientos inusuales o problemáticos.</p>
-        <div className="mt-4">
-          <button
-            onClick={() => handleShowActivity("usuario1@example.com")}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Ver Actividad de Usuario 1
-          </button>
-        </div>
+      {/* Motivación diaria */}
+      <div className="motivation-settings">
+        <h3>Motivación Diaria</h3>
+        <input
+          type="text"
+          value={motivation}
+          onChange={(e) => setMotivation(e.target.value)}
+          placeholder="Escribe tu frase motivacional"
+        />
       </div>
+
+      {/* Información de progreso del usuario */}
+      <div className="user-progress">
+        <h3>Progreso del Usuario</h3>
+        <label>
+          Peso Actual: 
+          <input
+            type="number"
+            value={userProgress.weight}
+            onChange={(e) => setUserProgress({ ...userProgress, weight: parseInt(e.target.value) })}
+            placeholder="Peso en kg"
+          />
+        </label>
+        <label>
+          Objetivo: 
+          <input
+            type="text"
+            value={userProgress.goal}
+            onChange={(e) => setUserProgress({ ...userProgress, goal: e.target.value })}
+            placeholder="Objetivo (Ej. Bajar de peso)"
+          />
+        </label>
+      </div>
+
+      {/* Botón para guardar preferencias */}
+      <button onClick={savePreferences} className="save-button">
+        Guardar Preferencias
+      </button>
+
+      {/* Secciones dinámicas basadas en las preferencias */}
+      <div className="user-dashboard">
+        {showWorkout && (
+          <div className="workout-section">
+            <h3>Tu Rutina de Ejercicio</h3>
+            <p>Aquí va el contenido de los ejercicios.</p>
+          </div>
+        )}
+        {showNutrition && (
+          <div className="nutrition-section">
+            <h3>Recomendaciones de Nutrición</h3>
+            <p>Aquí va el contenido de nutrición.</p>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        /* Estilos básicos */
+        .container {
+          padding: 20px;
+          font-family: Arial, sans-serif;
+        }
+
+        .theme-settings, .section-settings, .reminder-settings, .motivation-settings, .user-progress {
+          margin-bottom: 20px;
+        }
+
+        .theme-button, .save-button {
+          padding: 10px;
+          margin-right: 10px;
+          cursor: pointer;
+        }
+
+        .save-button {
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+        }
+
+        .save-button:hover {
+          background-color: #45a049;
+        }
+
+        .user-dashboard {
+          margin-top: 20px;
+        }
+
+        .workout-section, .nutrition-section {
+          margin-top: 20px;
+        }
+
+        .light {
+          background-color: white;
+          color: black;
+        }
+
+        .dark {
+          background-color: #333;
+          color: white;
+        }
+
+        .text-center {
+          text-align: center;
+        }
+
+        textarea, input[type="text"], input[type="number"] {
+          width: 100%;
+          padding: 8px;
+          margin-top: 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default AdminProfileSettings;
+export default PersonalizationPage;
